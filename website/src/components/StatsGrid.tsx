@@ -27,7 +27,8 @@ interface StatsGridProps {
     blockHeight: number;
     epoch: number;
     epochProgress: number;
-    tps: number;
+    tps?: number;
+    blockTimeMs?: number;
     totalSupply: number;
     l1Supply?: number;
     l2Supply?: number;
@@ -39,17 +40,22 @@ interface StatsGridProps {
 export default function StatsGrid({ stats, network = "mainnet" }: StatsGridProps) {
   const netLabel = network === "testnet" ? "Testnet" : "Mainnet";
 
-  // Show clean supply label — no confusing L1/L2 split until L1 token launches
-  const supplySub = stats.l2Supply != null && stats.l2Supply > 0
-    ? `$MYTH \u00b7 L2 Native`
-    : "$MYTH \u00b7 Mythic L2";
+  const l1 = stats.l1Supply ?? 0;
+  const l2 = stats.l2Supply ?? 0;
+  const supplySub = l1 > 0 && l2 > 0
+    ? `L1: ${formatSupply(l1)} | L2: ${formatSupply(l2)}`
+    : "$MYTH";
+
+  const blockTimeDisplay = stats.blockTimeMs != null
+    ? `${stats.blockTimeMs}ms`
+    : "\u2014";
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-px bg-mythic-border">
       <Stat label="Slot" value={stats.slot.toLocaleString()} />
       <Stat label="Block Height" value={stats.blockHeight.toLocaleString()} />
       <Stat label="Epoch" value={stats.epoch} sub={`${stats.epochProgress}% complete`} />
-      <Stat label="TPS" value={stats.tps} />
+      <Stat label="Block Time" value={blockTimeDisplay} />
       <Stat
         label="Total Supply"
         value={formatSupply(stats.totalSupply)}

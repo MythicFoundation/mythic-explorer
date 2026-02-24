@@ -7,7 +7,7 @@ export function getConnection() {
   return new Connection(RPC_URL, "confirmed");
 }
 
-/* ── Raw RPC helper (bypasses web3.js response validation) ──────────────── */
+/* -- Raw RPC helper (bypasses web3.js response validation) --------------- */
 async function rawRpc(method: string, params: any[] = []): Promise<any> {
   const res = await fetch(RPC_URL, {
     method: "POST",
@@ -20,7 +20,7 @@ async function rawRpc(method: string, params: any[] = []): Promise<any> {
   return json.result;
 }
 
-/* ── Supply oracle ──────────────────────────────────────────────────────── */
+/* -- Supply oracle ------------------------------------------------------- */
 async function getOracleSupply(): Promise<{
   totalSupply: number;
   circulatingSupply: number;
@@ -43,26 +43,37 @@ async function getOracleSupply(): Promise<{
   };
 }
 
-/* ── Cluster stats ──────────────────────────────────────────────────────── */
+/* -- Cluster stats ------------------------------------------------------- */
 export async function getClusterStats() {
   const conn = getConnection();
   const [epochInfo, perfSamples, oracleSupply] = await Promise.all([
     conn.getEpochInfo(),
-    conn.getRecentPerformanceSamples(1),
+    conn.getRecentPerformanceSamples(4),
     getOracleSupply(),
   ]);
 
-  const tps =
-    perfSamples.length > 0
-      ? Math.round(perfSamples[0].numTransactions / perfSamples[0].samplePeriodSecs)
-      : 0;
+  // Calculate average block time from performance samples
+  let blockTimeMs: number | undefined = undefined;
+  if (perfSamples.length > 0) {
+    let totalSlots = 0;
+    let totalSecs = 0;
+    for (const sample of perfSamples) {
+      if (sample.numSlots > 0 && sample.samplePeriodSecs > 0) {
+        totalSlots += sample.numSlots;
+        totalSecs += sample.samplePeriodSecs;
+      }
+    }
+    if (totalSlots > 0) {
+      blockTimeMs = Math.round((totalSecs / totalSlots) * 1000);
+    }
+  }
 
   return {
     slot: epochInfo.absoluteSlot,
     blockHeight: epochInfo.blockHeight ?? 0,
     epoch: epochInfo.epoch,
     epochProgress: Math.round((epochInfo.slotIndex / epochInfo.slotsInEpoch) * 100),
-    tps,
+    blockTimeMs,
     totalSupply: oracleSupply.totalSupply,
     l1Supply: oracleSupply.l1Supply,
     l2Supply: oracleSupply.l2Supply,
@@ -70,7 +81,7 @@ export async function getClusterStats() {
   };
 }
 
-/* ── Recent blocks (uses raw RPC to avoid web3.js validation issues) ──── */
+/* -- Recent blocks (uses raw RPC to avoid web3.js validation issues) ----- */
 export async function getRecentBlocks(limit = 10) {
   const slot = await rawRpc("getSlot");
   const blocks: Array<{
@@ -102,7 +113,7 @@ export async function getRecentBlocks(limit = 10) {
   return blocks;
 }
 
-/* ── Recent transactions ────────────────────────────────────────────────── */
+/* -- Recent transactions ------------------------------------------------- */
 export async function getRecentTransactions(limit = 20) {
   const conn = getConnection();
   const slot = await conn.getSlot();
@@ -140,7 +151,7 @@ export async function getRecentTransactions(limit = 20) {
   return txs;
 }
 
-/* ── Transaction detail ─────────────────────────────────────────────────── */
+/* -- Transaction detail -------------------------------------------------- */
 export async function getTransactionDetail(signature: string) {
   const conn = getConnection();
   const tx = await conn.getTransaction(signature, {
@@ -172,7 +183,7 @@ export async function getTransactionDetail(signature: string) {
   };
 }
 
-/* ── Address info ───────────────────────────────────────────────────────── */
+/* -- Address info -------------------------------------------------------- */
 export async function getAddressInfo(address: string) {
   const conn = getConnection();
   const pubkey = new PublicKey(address);
@@ -206,7 +217,7 @@ export async function getAddressInfo(address: string) {
   };
 }
 
-/* ── Block detail (raw RPC to support transactionDetails: "signatures") ── */
+/* -- Block detail (raw RPC to support transactionDetails: "signatures") -- */
 export async function getBlockDetail(slot: number) {
   try {
     const block = await rawRpc("getBlock", [
