@@ -39,14 +39,10 @@ interface StatsGridProps {
 export default function StatsGrid({ stats, network = "mainnet" }: StatsGridProps) {
   const netLabel = network === "testnet" ? "Testnet" : "Mainnet";
 
-  const parts: string[] = [];
-  if (stats.l1Supply != null && stats.l1Supply > 0) {
-    parts.push(`L1: ${formatSupply(stats.l1Supply)}`);
-  }
-  if (stats.l2Supply != null && stats.l2Supply > 0) {
-    parts.push(`L2: ${formatSupply(stats.l2Supply)}`);
-  }
-  const supplySub = parts.length > 0 ? `$MYTH \u00b7 ${parts.join(" | ")}` : "$MYTH";
+  // Show clean supply label — no confusing L1/L2 split until L1 token launches
+  const supplySub = stats.l2Supply != null && stats.l2Supply > 0
+    ? `$MYTH \u00b7 L2 Native`
+    : "$MYTH \u00b7 Mythic L2";
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-px bg-mythic-border">
