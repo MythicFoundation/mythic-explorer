@@ -10,22 +10,29 @@ const config: Config = {
     extend: {
       colors: {
         mythic: {
-          bg: "#0a0a0f",
-          surface: "#12121a",
-          border: "#1e1e2e",
+          violet: "#7B2FFF",
+          "violet-bright": "#9B5FFF",
+          "violet-deep": "#5A1FCC",
           green: "#39FF14",
-          "green-dim": "#2ACC10",
-          "green-light": "#6FFF4F",
-          purple: "#7c3aed",
-          cyan: "#06b6d4",
-          text: "#e2e2e8",
-          muted: "#8888a0",
+        },
+        bg: {
+          0: "#0A0A12",
+          1: "#12121C",
+          2: "#1A1A28",
+          3: "#222234",
+          4: "#2A2A40",
+        },
+        text: {
+          100: "#FFFFFF",
+          200: "#E0E0E8",
+          300: "#A0A0B0",
+          400: "#686878",
         },
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
-        heading: ["Sora", "system-ui", "sans-serif"],
-        mono: ["JetBrains Mono", "monospace"],
+        display: ["var(--font-sora)", "system-ui", "sans-serif"],
+        body: ["var(--font-inter)", "system-ui", "sans-serif"],
+        mono: ["var(--font-jetbrains)", "monospace"],
       },
       borderRadius: {
         none: "0px",

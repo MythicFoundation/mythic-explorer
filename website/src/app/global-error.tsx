@@ -9,13 +9,31 @@ export default function GlobalError({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-[#0A0A0F] text-white flex items-center justify-center">
+      <body className="min-h-screen bg-black text-white flex items-center justify-center" style={{ fontFamily: "monospace" }}>
         <div className="text-center space-y-4">
-          <h1 className="text-2xl font-bold">Something went wrong</h1>
-          <p className="text-gray-400 text-sm">An unexpected error occurred.</p>
+          <p style={{ fontSize: "0.55rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#686878" }}>
+            Error
+          </p>
+          <h1 style={{ fontSize: "1.2rem", fontWeight: "bold", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+            Something went wrong
+          </h1>
+          <p style={{ fontSize: "0.65rem", color: "#686878" }}>
+            An unexpected error occurred.
+          </p>
           <button
             onClick={() => reset()}
-            className="px-4 py-2 bg-[#39FF14]/10 border border-[#39FF14]/30 text-[#39FF14] text-sm hover:bg-[#39FF14]/20 transition-colors"
+            style={{
+              padding: "0.625rem 1.25rem",
+              border: "1px solid rgba(255,255,255,0.12)",
+              background: "transparent",
+              color: "white",
+              fontSize: "0.6rem",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase" as const,
+              cursor: "pointer",
+              fontFamily: "monospace",
+              borderRadius: "0",
+            }}
           >
             Try again
           </button>
