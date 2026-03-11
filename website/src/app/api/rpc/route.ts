@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getClusterStats, getRecentBlocks, getRecentTransactions } from "@/lib/rpc";
+import { getClusterStats, getRecentBlocks, getRecentTransactions, getBlockDetail } from "@/lib/rpc";
 
 export async function GET(request: NextRequest) {
   const type = request.nextUrl.searchParams.get("type");

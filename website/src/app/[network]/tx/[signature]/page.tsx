@@ -71,7 +71,7 @@ export default async function TransactionPage({
           </div>
           <div className="grid grid-cols-[160px_1fr] px-5 py-3">
             <span className="font-mono text-[0.65rem] text-[#555568]">Fee</span>
-            <span className="font-mono text-[0.75rem] text-[#D8D8E4]">{tx.fee} MYTH</span>
+            <span className="font-mono text-[0.75rem] text-[#D8D8E4]">{tx.fee < 1000 ? "< 0.01" : (tx.fee / 1e9).toFixed(6)} MYTH</span>
           </div>
           <div className="grid grid-cols-[160px_1fr] px-5 py-3">
             <span className="font-mono text-[0.65rem] text-[#555568]">Compute Units</span>
